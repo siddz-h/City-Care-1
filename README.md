@@ -209,7 +209,7 @@ flowchart TB
 
 ## 13. Automated Testing Results (Verified Output)
 
-SilverCare includes an automated unit and integration test suite in `tests/elderlyCare.test.ts`. Running `npm test` executes **9 tests across 1 suite with 9 passing and 0 failing**:
+SilverCare includes an automated unit and integration test suite in `tests/elderlyCare.test.ts`. Running `npm test` executes **10 tests across 1 suite with 10 passing and 0 failing**:
 
 ```text
 $ npm test
@@ -225,10 +225,11 @@ $ npm test
 ✔ 7. Enforces server-side passcode & session token authorization on protected Care Circle requests
 ✔ 8. Enforces Care Circle role permissions and Senior Autonomy schedule edit locks
 ✔ 9. Resolves ADAPTION_API_KEY and ADAPTION_API_BASE_URL environment variables accurately
+✔ 10. Proactively sweeps and generates email reminders for missed doses, upcoming doses, and appointments
 
-# tests 9
+# tests 10
 # suites 1
-# pass 9
+# pass 10
 # fail 0
 ```
 

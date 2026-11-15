@@ -364,3 +364,66 @@ export function buildProactiveEmailReminder(
     triggeredBy,
   };
 }
+
+/**
+ * Proactively evaluates a senior profile for missed medications, upcoming doses,
+ * and upcoming medical appointments and returns newly generated email reminders
+ * that have not yet been dispatched.
+ */
+export function runProactiveReminderSweep(
+  profile: ElderlyProfile,
+  timestampStr: string
+): EmailReminderLog[] {
+  const generated: EmailReminderLog[] = [];
+  const existingSubjects = new Set((profile.emailReminders || []).map((e) => e.subject));
+
+  // 1. Check missed medications
+  const missedMeds = (profile.medications || []).filter((m) => m.todayStatus === 'missed');
+  if (missedMeds.length > 0) {
+    const missedLog = buildProactiveEmailReminder(
+      profile,
+      'missed_medication',
+      'Automated Proactive Watchdog',
+      timestampStr
+    );
+    if (!existingSubjects.has(missedLog.subject)) {
+      generated.push(missedLog);
+      existingSubjects.add(missedLog.subject);
+    }
+  }
+
+  // 2. Check upcoming doses
+  const pendingMeds = (profile.medications || []).filter((m) => m.todayStatus === 'pending');
+  if (pendingMeds.length > 0) {
+    const upcomingLog = buildProactiveEmailReminder(
+      profile,
+      'upcoming_dose',
+      'Automated Proactive Dose Scheduler',
+      timestampStr
+    );
+    if (!existingSubjects.has(upcomingLog.subject)) {
+      generated.push(upcomingLog);
+      existingSubjects.add(upcomingLog.subject);
+    }
+  }
+
+  // 3. Check upcoming medical appointments
+  const unremindedApts = (profile.appointments || []).filter(
+    (a) => a.status === 'upcoming' && !a.reminderEmailSent
+  );
+  if (unremindedApts.length > 0) {
+    const aptLog = buildProactiveEmailReminder(
+      profile,
+      'appointment_reminder',
+      'Automated Appointment Notifier',
+      timestampStr
+    );
+    if (!existingSubjects.has(aptLog.subject)) {
+      generated.push(aptLog);
+      existingSubjects.add(aptLog.subject);
+    }
+  }
+
+  return generated;
+}
+

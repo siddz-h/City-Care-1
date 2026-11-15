@@ -20,6 +20,7 @@ import {
   evaluateElderlyContext,
   generateContextualAssistantReply,
   buildProactiveEmailReminder,
+  runProactiveReminderSweep,
 } from './src/utils/clinicalDecisionEngine.js';
 
 dotenv.config();
@@ -620,6 +621,19 @@ function syncProfileAdherence(profile: StoredElderlyProfile): void {
       total: profile.medications.length,
     };
   }
+  const ist = getLiveISTTimestamp();
+  const autoSweepReminders = runProactiveReminderSweep(
+    sanitizePublicProfile(profile),
+    `Today, ${ist.timeShort} IST`
+  );
+  if (autoSweepReminders.length > 0) {
+    profile.emailReminders.unshift(...autoSweepReminders);
+    profile.appointments.forEach((apt) => {
+      if (apt.status === 'upcoming') {
+        apt.reminderEmailSent = true;
+      }
+    });
+  }
 }
 
 // -------------------------------------------------------------
@@ -637,6 +651,26 @@ app.get('/api/time', (_req: Request, res: Response) => {
 // 2. Get All Elderly Care Profiles & Audit Logs
 app.get('/api/elderly-care/profiles', (_req: Request, res: Response) => {
   const db = loadDB();
+  let updated = false;
+  const ist = getLiveISTTimestamp();
+  for (const profile of db.elderlyProfiles) {
+    const swept = runProactiveReminderSweep(
+      sanitizePublicProfile(profile),
+      `Today, ${ist.timeShort} IST`
+    );
+    if (swept.length > 0) {
+      profile.emailReminders.unshift(...swept);
+      profile.appointments.forEach((apt) => {
+        if (apt.status === 'upcoming') {
+          apt.reminderEmailSent = true;
+        }
+      });
+      updated = true;
+    }
+  }
+  if (updated) {
+    saveDB(db);
+  }
   res.json({
     success: true,
     profiles: db.elderlyProfiles.map(sanitizePublicProfile),

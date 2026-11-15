@@ -7,6 +7,7 @@ import {
   evaluateElderlyContext,
   generateContextualAssistantReply,
   buildProactiveEmailReminder,
+  runProactiveReminderSweep,
 } from '../src/utils/clinicalDecisionEngine.js';
 import {
   hashPasscode,
@@ -270,5 +271,38 @@ describe('Elderly Care & Medication Management Platform — Unit & Integration T
     assert.equal(mistakenEnv.apiKeyConfigured, false);
     assert.equal(mistakenEnv.baseUrl, 'https://api.prod.adaptionlabs.ai');
     assert.equal(mistakenEnv.baseUrlIsValidValue, false);
+  });
+
+  it('10. Proactively sweeps and generates email reminders for missed doses, upcoming doses, and appointments', () => {
+    const sweepProfile: ElderlyProfile = {
+      ...mockProfile,
+      medications: [
+        ...mockProfile.medications,
+        {
+          id: 'med-3',
+          medicineName: 'Metformin 500mg',
+          dosage: '1 Tablet',
+          purpose: 'Blood Sugar',
+          timeSlot: '01:30 PM',
+          period: 'Afternoon',
+          mealTiming: 'After Food',
+          prescribedBy: 'Dr. Rajeshwari Deshmukh',
+          pillsRemaining: 12,
+          todayStatus: 'pending',
+        },
+      ],
+      appointments: [
+        {
+          ...mockProfile.appointments[0],
+          reminderEmailSent: false,
+        },
+      ],
+    };
+
+    const generatedLogs = runProactiveReminderSweep(sweepProfile, 'Today, 01:00 PM IST');
+    const types = generatedLogs.map((l) => l.type);
+    assert.ok(types.includes('missed_medication'));
+    assert.ok(types.includes('upcoming_dose'));
+    assert.ok(types.includes('appointment_reminder'));
   });
 });

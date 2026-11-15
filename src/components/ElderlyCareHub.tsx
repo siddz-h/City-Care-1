@@ -326,8 +326,8 @@ export const ElderlyCareHub: React.FC<ElderlyCareHubProps> = ({
       } else {
         setPasscodeError(res.message || `Invalid passcode. Demo passcode is ${activeProfile.passcodeHint}`);
       }
-    } catch (err: any) {
-      setPasscodeError(err.message || 'Verification failed');
+    } catch (err: unknown) {
+      setPasscodeError(err instanceof Error ? err.message : 'Verification failed');
     } finally {
       setIsSubmitting(false);
     }
@@ -348,8 +348,8 @@ export const ElderlyCareHub: React.FC<ElderlyCareHubProps> = ({
       setShowChangePasscodeModal(false);
       setPasscodeChangeForm({ currentPasscode: '', newPasscode: '' });
       showToast(`Updated Care Circle passcode for ${activeProfile.name}.`, 'emerald');
-    } catch (err: any) {
-      showToast(err.message || 'Could not update passcode', 'amber');
+    } catch (err: unknown) {
+      showToast(err instanceof Error ? err.message : 'Could not update passcode', 'amber');
     } finally {
       setIsSubmitting(false);
     }
@@ -380,8 +380,8 @@ export const ElderlyCareHub: React.FC<ElderlyCareHubProps> = ({
       } else {
         showToast(`Updated ${med.medicineName} status to ${status}.`, 'blue');
       }
-    } catch (err: any) {
-      showToast(err.message || 'Could not update medication status', 'amber');
+    } catch (err: unknown) {
+      showToast(err instanceof Error ? err.message : 'Could not update medication status', 'amber');
     } finally {
       setUpdatingMedId(null);
     }
@@ -424,8 +424,8 @@ export const ElderlyCareHub: React.FC<ElderlyCareHubProps> = ({
       }
       setShowMedModal(false);
       setEditingMed(null);
-    } catch (err: any) {
-      showToast(err.message || 'Failed to save medication', 'amber');
+    } catch (err: unknown) {
+      showToast(err instanceof Error ? err.message : 'Failed to save medication', 'amber');
     } finally {
       setIsSubmitting(false);
     }
@@ -449,8 +449,8 @@ export const ElderlyCareHub: React.FC<ElderlyCareHubProps> = ({
       const updated = await api.deleteMedication(activeProfile.id, med.id, activeCareActor);
       replaceProfileInState(updated);
       showToast(`Removed ${med.medicineName} from schedule.`, 'blue');
-    } catch (err: any) {
-      showToast(err.message || 'Failed to delete medication', 'amber');
+    } catch (err: unknown) {
+      showToast(err instanceof Error ? err.message : 'Failed to delete medication', 'amber');
     } finally {
       setUpdatingMedId(null);
     }
@@ -477,8 +477,8 @@ export const ElderlyCareHub: React.FC<ElderlyCareHubProps> = ({
         `Appointment scheduled & confirmation email sent to ${emailLog.recipients.join(', ')}.`,
         'emerald'
       );
-    } catch (err: any) {
-      showToast(err.message || 'Failed to schedule appointment', 'amber');
+    } catch (err: unknown) {
+      showToast(err instanceof Error ? err.message : 'Failed to schedule appointment', 'amber');
     } finally {
       setIsSubmitting(false);
     }
@@ -494,8 +494,8 @@ export const ElderlyCareHub: React.FC<ElderlyCareHubProps> = ({
       const updated = await api.updateAppointmentStatus(activeProfile.id, aptId, status, activeCareActor);
       replaceProfileInState(updated);
       showToast(`Updated appointment status to ${status}.`, 'blue');
-    } catch (err: any) {
-      showToast(err.message || 'Failed to update appointment', 'amber');
+    } catch (err: unknown) {
+      showToast(err instanceof Error ? err.message : 'Failed to update appointment', 'amber');
     } finally {
       setUpdatingAptId(null);
     }
@@ -507,8 +507,8 @@ export const ElderlyCareHub: React.FC<ElderlyCareHubProps> = ({
     try {
       const updated = await api.toggleRoutineTask(activeProfile.id, routineId, activeCareActor);
       replaceProfileInState(updated);
-    } catch (err: any) {
-      showToast(err.message || 'Failed to update routine', 'amber');
+    } catch (err: unknown) {
+      showToast(err instanceof Error ? err.message : 'Failed to update routine', 'amber');
     }
   };
 
@@ -524,8 +524,8 @@ export const ElderlyCareHub: React.FC<ElderlyCareHubProps> = ({
       replaceProfileInState(updated);
       setNewRoutineTitle('');
       showToast('Added daily healthcare routine.', 'emerald');
-    } catch (err: any) {
-      showToast(err.message || 'Could not add routine', 'amber');
+    } catch (err: unknown) {
+      showToast(err instanceof Error ? err.message : 'Could not add routine', 'amber');
     }
   };
 
@@ -551,8 +551,8 @@ export const ElderlyCareHub: React.FC<ElderlyCareHubProps> = ({
         receiveEmailAlerts: true,
       });
       showToast(`Added ${memberForm.name} to ${activeProfile.name}'s Care Circle.`, 'emerald');
-    } catch (err: any) {
-      showToast(err.message || 'Could not add Care Circle member', 'amber');
+    } catch (err: unknown) {
+      showToast(err instanceof Error ? err.message : 'Could not add Care Circle member', 'amber');
     } finally {
       setIsSubmitting(false);
     }
@@ -568,8 +568,8 @@ export const ElderlyCareHub: React.FC<ElderlyCareHubProps> = ({
       replaceProfileInState(updated);
       setShowVitalsModal(false);
       showToast(`Logged updated vitals for ${activeProfile.name}.`, 'emerald');
-    } catch (err: any) {
-      showToast(err.message || 'Could not update vitals', 'amber');
+    } catch (err: unknown) {
+      showToast(err instanceof Error ? err.message : 'Could not update vitals', 'amber');
     } finally {
       setIsSubmitting(false);
     }
@@ -584,8 +584,8 @@ export const ElderlyCareHub: React.FC<ElderlyCareHubProps> = ({
       const updated = await api.updateAutonomyPreferences(activeProfile.id, updates, activeCareActor);
       replaceProfileInState(updated);
       showToast(`Saved ${activeProfile.name}'s personal care preferences.`, 'emerald');
-    } catch (err: any) {
-      showToast(err.message || 'Could not save preferences', 'amber');
+    } catch (err: unknown) {
+      showToast(err instanceof Error ? err.message : 'Could not save preferences', 'amber');
     }
   };
 
@@ -611,8 +611,8 @@ export const ElderlyCareHub: React.FC<ElderlyCareHubProps> = ({
       setSelectedProfileId(created.id);
       setShowNewProfileModal(false);
       showToast(`Created senior care profile for ${created.name} (Passcode: ${created.passcodeHint}).`, 'emerald');
-    } catch (err: any) {
-      showToast(err.message || 'Could not create profile', 'amber');
+    } catch (err: unknown) {
+      showToast(err instanceof Error ? err.message : 'Could not create profile', 'amber');
     } finally {
       setIsSubmitting(false);
     }
@@ -632,8 +632,8 @@ export const ElderlyCareHub: React.FC<ElderlyCareHubProps> = ({
         `Email Reminder Dispatched: "${emailLog.subject}" → ${emailLog.recipients.join(', ')}`,
         'emerald'
       );
-    } catch (err: any) {
-      showToast(err.message || 'Failed to dispatch email reminder', 'amber');
+    } catch (err: unknown) {
+      showToast(err instanceof Error ? err.message : 'Failed to dispatch email reminder', 'amber');
     } finally {
       setSendingReminderType(null);
     }
@@ -1927,7 +1927,8 @@ export const ElderlyCareHub: React.FC<ElderlyCareHubProps> = ({
                   value={activeProfile.autonomyPreferences.dailyCheckInMood}
                   onChange={(e) =>
                     handleUpdateAutonomy({
-                      dailyCheckInMood: e.target.value as any,
+                      dailyCheckInMood:
+                        e.target.value as ElderlyProfile['autonomyPreferences']['dailyCheckInMood'],
                     })
                   }
                   className="w-full min-h-[40px] px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 font-semibold text-slate-900"
@@ -1975,7 +1976,8 @@ export const ElderlyCareHub: React.FC<ElderlyCareHubProps> = ({
                   value={activeProfile.autonomyPreferences.preferredLanguage}
                   onChange={(e) =>
                     handleUpdateAutonomy({
-                      preferredLanguage: e.target.value as any,
+                      preferredLanguage:
+                        e.target.value as ElderlyProfile['autonomyPreferences']['preferredLanguage'],
                     })
                   }
                   className="w-full min-h-[40px] px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 font-semibold text-slate-900"

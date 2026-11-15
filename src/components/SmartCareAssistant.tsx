@@ -120,13 +120,14 @@ export const SmartCareAssistant: React.FC<SmartCareAssistantProps> = ({
         suggestedActions: res.suggestedActions,
       };
       setMessages((prev) => [...prev, botMsg]);
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorText = err instanceof Error ? err.message : 'Unable to process request right now.';
       setMessages((prev) => [
         ...prev,
         {
           id: `msg-err-${Date.now()}`,
           sender: 'assistant',
-          text: err?.message || 'Unable to process request right now.',
+          text: errorText,
           timestamp: 'Now',
         },
       ]);
@@ -137,19 +138,34 @@ export const SmartCareAssistant: React.FC<SmartCareAssistantProps> = ({
 
   const handleVoiceDictation = () => {
     if (typeof window === 'undefined') return;
-    const SpeechRecognition =
-      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SpeechRecognition) {
+    interface SpeechRecognitionResultEvent {
+      results?: ArrayLike<ArrayLike<{ transcript?: string }>>;
+    }
+    interface BrowserSpeechRecognition {
+      lang: string;
+      interimResults: boolean;
+      onresult: ((event: SpeechRecognitionResultEvent) => void) | null;
+      onerror: (() => void) | null;
+      onend: (() => void) | null;
+      start: () => void;
+    }
+    const speechWindow = window as unknown as {
+      SpeechRecognition?: new () => BrowserSpeechRecognition;
+      webkitSpeechRecognition?: new () => BrowserSpeechRecognition;
+    };
+    const SpeechRecognitionCtor =
+      speechWindow.SpeechRecognition || speechWindow.webkitSpeechRecognition;
+    if (!SpeechRecognitionCtor) {
       onSpeakText('Voice dictation is not supported in this browser. Please type your question.');
       return;
     }
 
-    const recognition = new SpeechRecognition();
+    const recognition = new SpeechRecognitionCtor();
     recognition.lang = profile.autonomyPreferences.preferredLanguage || 'en-IN';
     recognition.interimResults = false;
     setIsListening(true);
 
-    recognition.onresult = (event: any) => {
+    recognition.onresult = (event: SpeechRecognitionResultEvent) => {
       const transcript = event.results?.[0]?.[0]?.transcript || '';
       setIsListening(false);
       if (transcript) {
