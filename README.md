@@ -1,7 +1,6 @@
 # SilverCare — Elderly Care & Medication Management Platform
 
-**Live Deployment URL:** [https://ais-pre-bxytgppesah33psacacmdl-530948025475.asia-east1.run.app](https://ais-pre-bxytgppesah33psacacmdl-530948025475.asia-east1.run.app)  
-**Alternate Preview URL:** [https://ais-pre-cefe6u3zggwfiu6fe5x5gk-530948025475.asia-east1.run.app](https://ais-pre-cefe6u3zggwfiu6fe5x5gk-530948025475.asia-east1.run.app)  
+**Live Project URL:** [https://ais-dev-bxytgppesah33psacacmdl-530948025475.asia-east1.run.app](https://ais-dev-bxytgppesah33psacacmdl-530948025475.asia-east1.run.app)  
 **Hackathon Track:** CATALYST — Solo AI Hackathon (Makers Need More × PromptWars)  
 **Chosen Vertical:** Elderly Care & Medication Management Platform
 
@@ -291,8 +290,7 @@ APP_URL="MY_APP_URL"
 
 ## 16. Live Deployment & GitHub Repository Links
 
-- **Live Deployed Application:** [https://ais-pre-bxytgppesah33psacacmdl-530948025475.asia-east1.run.app](https://ais-pre-bxytgppesah33psacacmdl-530948025475.asia-east1.run.app)
-- **Alternate Live Preview Link:** [https://ais-pre-cefe6u3zggwfiu6fe5x5gk-530948025475.asia-east1.run.app](https://ais-pre-cefe6u3zggwfiu6fe5x5gk-530948025475.asia-east1.run.app)
+- **Live Project Link:** [https://ais-dev-bxytgppesah33psacacmdl-530948025475.asia-east1.run.app](https://ais-dev-bxytgppesah33psacacmdl-530948025475.asia-east1.run.app)
 - **GitHub Repository:** Connected to your public single-branch (`main`) GitHub repository.
 
 ---
