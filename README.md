@@ -1,6 +1,6 @@
 # SilverCare — Elderly Care & Medication Management Platform
 
-**Live Project URL:** [https://ais-dev-bxytgppesah33psacacmdl-530948025475.asia-east1.run.app](https://ais-dev-bxytgppesah33psacacmdl-530948025475.asia-east1.run.app)  
+**Live Project URL:** [https://city-care-1.vercel.app/](https://city-care-1.vercel.app/)  
 **Hackathon Track:** CATALYST — Solo AI Hackathon (Makers Need More × PromptWars)  
 **Chosen Vertical:** Elderly Care & Medication Management Platform
 
@@ -290,7 +290,7 @@ APP_URL="MY_APP_URL"
 
 ## 16. Live Deployment & GitHub Repository Links
 
-- **Live Project Link:** [https://ais-dev-bxytgppesah33psacacmdl-530948025475.asia-east1.run.app](https://ais-dev-bxytgppesah33psacacmdl-530948025475.asia-east1.run.app)
+- **Live Project Link (Vercel):** [https://city-care-1.vercel.app/](https://city-care-1.vercel.app/)
 - **GitHub Repository:** Connected to your public single-branch (`main`) GitHub repository.
 
 ---
