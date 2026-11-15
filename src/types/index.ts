@@ -1,241 +1,136 @@
-export type UserRole = 'patient' | 'doctor' | 'receptionist' | 'admin';
-export type Language = 'en' | 'hi' | 'mr';
+export type CareRole = 'Elderly Self' | 'Family Member' | 'Primary Caretaker' | 'Son' | 'Daughter' | 'Spouse' | 'Nurse';
+export type DosePeriod = 'Morning' | 'Afternoon' | 'Evening' | 'Night';
+export type MealTiming = 'Before Food' | 'After Food' | 'With Food' | 'With Water';
+export type DoseStatus = 'pending' | 'taken' | 'missed' | 'snoozed';
+export type ReminderType = 'missed_medication' | 'upcoming_dose' | 'appointment_reminder' | 'refill_alert';
+export type FontScale = 'normal' | 'large' | 'xlarge';
 
-export interface User {
+export interface CareCircleMember {
   id: string;
   name: string;
+  relation: CareRole;
   email: string;
-  role: UserRole;
-  phone?: string;
-  bloodGroup?: string;
-  age?: number;
-  gender?: 'Male' | 'Female' | 'Other';
-  city?: string;
-  speciality?: string;
-  hospitalId?: string;
-}
-
-export interface BedAvailability {
-  generalTotal: number;
-  generalAvailable: number;
-  icuTotal: number;
-  icuAvailable: number;
-  ventilatorsTotal: number;
-  ventilatorsAvailable: number;
-  oxygenAvailable: boolean;
-  ambulanceAvailable: boolean;
-}
-
-export interface Hospital {
-  id: string;
-  name: string;
-  city: string;
-  state: string;
-  address: string;
   phone: string;
-  emergencyPhone: string;
-  email?: string;
-  departments: string[];
-  rating: number;
-  beds: number;
-  bedDetails?: BedAvailability;
-  lat: number;
-  lng: number;
-  isOpen24x7: boolean;
-  image?: string;
-  osmSource?: boolean;
+  canEditMedications: boolean;
+  receiveEmailAlerts: boolean;
 }
 
-export interface BlockedSlot {
-  date: string;
-  slot: string;
-  reason: string;
-}
-
-export interface Doctor {
+export interface MedicationScheduleItem {
   id: string;
-  userId?: string;
-  name: string;
-  speciality: string;
-  department: string;
-  qualification: string;
-  experience: number;
-  hospitalId: string;
-  hospitalName: string;
-  city: string;
-  fee: number;
-  rating: number;
-  reviewCount?: number;
-  phone: string;
-  availableDays: string[];
-  availableSlots: string[];
-  blockedSlots?: BlockedSlot[];
-  avatar?: string;
-  gender?: 'male' | 'female' | 'Male' | 'Female';
-  bio?: string;
-  roomNumber?: string;
-}
-
-export type AppointmentStatus =
-  | 'scheduled'
-  | 'checked_in'
-  | 'in_consultation'
-  | 'completed'
-  | 'cancelled'
-  | 'rescheduled'
-  | 'no_show';
-
-export type PaymentMethod = 'cash' | 'demo_online';
-export type PaymentStatus = 'pending' | 'paid' | 'failed' | 'refunded';
-
-export interface PrescriptionItem {
-  id: string;
-  medicine: string;
-  dosage: string; // e.g., '1-0-1' or '1 Tablet'
-  duration: string; // e.g., '5 Days'
-  timing: 'After Food' | 'Before Food' | 'As Needed';
-  instructions?: string;
-}
-
-export interface PatientVitals {
-  bp?: string; // e.g. '120/80 mmHg'
-  pulse?: number; // e.g. 76 bpm
-  temp?: number; // e.g. 98.6 °F
-  spo2?: number; // e.g. 99%
-  sugar?: string; // e.g. '105 mg/dL'
-  allergies?: string; // e.g. 'Penicillin, Dust'
-  recordedAt?: string;
-}
-
-export interface Appointment {
-  id: string;
-  tokenNumber: string;
-  patientId: string;
-  patientName: string;
-  patientPhone: string;
-  patientEmail: string;
-  patientAge: number;
-  patientGender: string;
-  doctorId: string;
-  doctorName: string;
-  doctorSpeciality: string;
-  hospitalId: string;
-  hospitalName: string;
-  city: string;
-  appointmentDate: string; // YYYY-MM-DD
-  appointmentTime: string; // e.g. "10:00 AM"
-  roomNumber?: string; // e.g. "OPD Room 204"
-  symptoms: string;
-  fee: number;
-  paymentMethod: PaymentMethod;
-  paymentStatus: PaymentStatus;
-  transactionId?: string;
-  paymentModeDetail?: string;
-  status: AppointmentStatus;
-  doctorNotes?: string;
-  cancelReason?: string;
-  createdAt: string;
-  vitals?: PatientVitals;
-  prescriptions?: PrescriptionItem[];
-  rating?: number;
-  reviewFeedback?: string;
-  checkedInAt?: string;
-  consultationStartedAt?: string;
-  completedAt?: string;
-}
-
-export interface SymptomMatch {
-  speciality: string;
-  department: string;
-  matchedKeywords: string[];
-  score: number;
-  urgency: 'Low' | 'Medium' | 'High';
-  recommendation: string;
-}
-
-export interface AuditLog {
-  id: string;
-  timestamp: string;
-  action: string;
-  user: string;
-  details: string;
-  targetId?: string;
-}
-
-export interface NotificationAlert {
-  id: string;
-  patientId?: string;
-  type: 'sms' | 'whatsapp' | 'email';
-  recipient: string;
-  patientName: string;
-  title: string;
-  message: string;
-  timestamp: string;
-  status: 'delivered' | 'sent';
-  tokenNumber?: string;
-}
-
-export interface ReportSummary {
-  totalHospitals: number;
-  totalDoctors: number;
-  totalBookings: number;
-  todayBookings: number;
-  statusCounts: {
-    completed: number;
-    checkedIn: number;
-    scheduled: number;
-    cancelled: number;
-    noShow: number;
-  };
-  revenue: {
-    totalRevenue: number;
-    cashRevenue: number;
-    onlineRevenue: number;
-  };
-  departmentCounts: Record<string, number>;
-  cityCounts: Record<string, number>;
-}
-
-export interface AuthorizedAdmin {
-  email: string;
-  name: string;
-  grantedBy: string;
-  grantedAt: string;
-  isRoot: boolean;
-  status: 'active' | 'revoked';
+  medicineName: string;
+  dosage: string;
+  purpose: string;
+  timeSlot: string; // e.g. "08:00 AM"
+  period: DosePeriod;
+  mealTiming: MealTiming;
+  prescribedBy: string;
+  pillsRemaining: number;
+  todayStatus: DoseStatus;
+  lastTakenAt?: string;
   notes?: string;
 }
 
-export interface SmartBookingOption {
-  doctor: Doctor;
-  hospital: Hospital;
-  availableSlots: string[];
-  pastSlots?: string[];
-  recommendedSlot: string;
-  isPrimaryMatch?: boolean;
-  explanation: string;
+export interface MedicalAppointment {
+  id: string;
+  doctorName: string;
+  speciality: string;
+  clinicOrHospital: string;
+  appointmentDate: string; // YYYY-MM-DD
+  appointmentTime: string; // e.g. "10:30 AM"
+  purpose: string;
+  status: 'upcoming' | 'completed' | 'rescheduled' | 'cancelled';
+  preparationNotes: string;
+  accompaniedBy: string;
+  reminderEmailSent: boolean;
 }
 
-export interface SmartBookingTriage {
-  primarySpeciality: string;
-  departments: string[];
-  urgency: 'Routine' | 'Medium' | 'High' | 'Emergency';
-  isEmergency?: boolean;
-  urgentCareGuidance?: string | null;
-  clinicalExplanation: string;
+export interface DailyRoutineTask {
+  id: string;
+  title: string;
+  time: string;
+  category: 'Vitals' | 'Exercise' | 'Hydration' | 'Nutrition' | 'Wellness';
+  completed: boolean;
+  completedBy?: string;
 }
 
-export interface SmartBookingResult {
-  success: boolean;
-  triage: SmartBookingTriage;
-  preferredDate: string;
-  preferredTime: string;
-  options: SmartBookingOption[];
-  totalMatches: number;
-  liveTimeIST?: string;
-  todayDateIST?: string;
-  autoAdvancedFromToday?: boolean;
-  timeNotice?: string;
+export interface EmailReminderLog {
+  id: string;
+  elderlyId: string;
+  type: ReminderType;
+  subject: string;
+  recipients: string[];
+  bodyPreview: string;
+  sentAt: string;
+  status: 'delivered' | 'queued';
+  triggeredBy: string;
 }
 
+export interface ElderlyAutonomyPreferences {
+  gracePeriodMinutes: number; // Minutes before family is emailed for a missed dose
+  voiceReadoutEnabled: boolean;
+  preferredLanguage: 'en-IN' | 'hi-IN' | 'mr-IN';
+  allowCaretakerScheduleEdits: boolean;
+  dailyCheckInMood: 'Energetic' | 'Comfortable' | 'Tired' | 'Needs Assistance';
+  personalCareNote: string;
+}
 
+export interface VitalsSummary {
+  bp: string; // e.g. "126/80 mmHg"
+  bloodSugar: string; // e.g. "112 mg/dL"
+  heartRate: number; // e.g. 74
+  spo2: number; // e.g. 98
+  lastUpdated: string;
+}
+
+export interface ClinicalInsight {
+  id: string;
+  severity: 'info' | 'warning' | 'critical';
+  category: 'Adherence' | 'Vitals' | 'Refill' | 'Appointment' | 'Interaction';
+  title: string;
+  recommendation: string;
+  actionLabel?: string;
+  actionType?: 'send_missed_email' | 'send_refill_email' | 'send_appointment_email' | 'review_vitals';
+}
+
+export interface AssistantMessage {
+  id: string;
+  sender: 'user' | 'assistant';
+  text: string;
+  timestamp: string;
+  contextTags?: string[];
+  suggestedActions?: {
+    label: string;
+    action: 'send_missed_email' | 'send_upcoming_email' | 'send_appointment_email' | 'mark_next_taken';
+  }[];
+}
+
+export interface ElderlyProfile {
+  id: string;
+  name: string;
+  age: number;
+  gender: 'Male' | 'Female' | 'Other';
+  bloodGroup: string;
+  city: string;
+  passcodeHint: string; // Display hint for demo evaluation while passcode verification runs server-side
+  chronicConditions: string[];
+  allergies: string[];
+  primaryDoctorName: string;
+  emergencyContact: string;
+  adherenceRate7d: number;
+  weeklyHistory: { day: string; taken: number; total: number }[];
+  vitalsSummary: VitalsSummary;
+  autonomyPreferences: ElderlyAutonomyPreferences;
+  careCircle: CareCircleMember[];
+  medications: MedicationScheduleItem[];
+  appointments: MedicalAppointment[];
+  routines: DailyRoutineTask[];
+  emailReminders: EmailReminderLog[];
+}
+
+export interface AuditEntry {
+  id: string;
+  timestamp: string;
+  actor: string;
+  action: string;
+  details: string;
+}
