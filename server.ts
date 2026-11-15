@@ -22,6 +22,7 @@ import {
   buildProactiveEmailReminder,
   runProactiveReminderSweep,
 } from './src/utils/clinicalDecisionEngine.js';
+import { StoredElderlyProfile, getInitialSeedProfiles } from './src/data/seedProfiles.js';
 
 dotenv.config();
 
@@ -156,383 +157,9 @@ export function getLiveISTTimestamp(): { timeShort: string; dateStr: string; ful
   };
 }
 
-interface StoredElderlyProfile extends ElderlyProfile {
-  passcodeHash: string;
-}
-
 interface DatabaseSchema {
   elderlyProfiles: StoredElderlyProfile[];
   auditLogs: AuditEntry[];
-}
-
-function getInitialSeedProfiles(): StoredElderlyProfile[] {
-  return [
-    {
-      id: 'elder-1',
-      name: 'Rameshwar Patil',
-      age: 72,
-      gender: 'Male',
-      bloodGroup: 'B+',
-      city: 'Pune',
-      passcodeHint: '1954',
-      passcodeHash: hashPasscode('1954'),
-      chronicConditions: ['Hypertension (Stage 1)', 'Type 2 Diabetes', 'Knee Osteoarthritis'],
-      allergies: ['Sulfa Drugs', 'Penicillin'],
-      primaryDoctorName: 'Dr. Rajeshwari Deshmukh (Cardiology & Geriatrics)',
-      emergencyContact: '+91 98230 44551',
-      adherenceRate7d: 91,
-      weeklyHistory: [
-        { day: 'Mon', taken: 4, total: 4 },
-        { day: 'Tue', taken: 4, total: 4 },
-        { day: 'Wed', taken: 3, total: 4 },
-        { day: 'Thu', taken: 4, total: 4 },
-        { day: 'Fri', taken: 4, total: 4 },
-        { day: 'Sat', taken: 4, total: 4 },
-        { day: 'Sun', taken: 3, total: 4 },
-      ],
-      vitalsSummary: {
-        bp: '128/82 mmHg',
-        bloodSugar: '114 mg/dL (Fasting)',
-        heartRate: 74,
-        spo2: 98,
-        lastUpdated: 'Today, 07:30 AM IST',
-      },
-      autonomyPreferences: {
-        gracePeriodMinutes: 30,
-        voiceReadoutEnabled: true,
-        preferredLanguage: 'en-IN',
-        allowCaretakerScheduleEdits: true,
-        dailyCheckInMood: 'Comfortable',
-        personalCareNote: 'Prefer taking morning blood pressure tablet after warm water and light walk.',
-      },
-      careCircle: [
-        {
-          id: 'cc-1',
-          name: 'Rameshwar Patil',
-          relation: 'Elderly Self',
-          email: 'rameshwar.patil@silvercare.org',
-          phone: '+91 98230 11220',
-          canEditMedications: true,
-          receiveEmailAlerts: true,
-        },
-        {
-          id: 'cc-2',
-          name: 'Siddhesh Hote',
-          relation: 'Son',
-          email: 'siddheshhote@gmail.com',
-          phone: '+91 98230 44551',
-          canEditMedications: true,
-          receiveEmailAlerts: true,
-        },
-        {
-          id: 'cc-3',
-          name: 'Sunita Patil',
-          relation: 'Daughter',
-          email: 'sunita.familycare@gmail.com',
-          phone: '+91 98230 77882',
-          canEditMedications: true,
-          receiveEmailAlerts: true,
-        },
-        {
-          id: 'cc-4',
-          name: 'Sister Kavita More',
-          relation: 'Primary Caretaker',
-          email: 'kavita.caretaker@silvercare.org',
-          phone: '+91 98230 99003',
-          canEditMedications: true,
-          receiveEmailAlerts: true,
-        },
-      ],
-      medications: [
-        {
-          id: 'med-101',
-          medicineName: 'Telmisartan 40mg',
-          dosage: '1 Tablet (40mg)',
-          purpose: 'Blood Pressure Regulation',
-          timeSlot: '08:00 AM',
-          period: 'Morning',
-          mealTiming: 'After Food',
-          prescribedBy: 'Dr. Rajeshwari Deshmukh',
-          pillsRemaining: 18,
-          todayStatus: 'taken',
-          lastTakenAt: '08:05 AM IST',
-          notes: 'Take with a full glass of water after morning breakfast.',
-        },
-        {
-          id: 'med-102',
-          medicineName: 'Metformin SR 500mg',
-          dosage: '1 Tablet (500mg)',
-          purpose: 'Type 2 Diabetes Glycemic Control',
-          timeSlot: '01:30 PM',
-          period: 'Afternoon',
-          mealTiming: 'After Food',
-          prescribedBy: 'Dr. Sameer Joshi',
-          pillsRemaining: 14,
-          todayStatus: 'pending',
-          notes: 'Take immediately after lunch to prevent post-meal glucose spike.',
-        },
-        {
-          id: 'med-103',
-          medicineName: 'Calcium + Vitamin D3 (Shelcal 500)',
-          dosage: '1 Tablet',
-          purpose: 'Bone Density & Knee Osteoarthritis',
-          timeSlot: '05:00 PM',
-          period: 'Evening',
-          mealTiming: 'After Food',
-          prescribedBy: 'Dr. Nilesh Kulkarni',
-          pillsRemaining: 22,
-          todayStatus: 'missed',
-          notes: 'Supports joint strength and mobility.',
-        },
-        {
-          id: 'med-104',
-          medicineName: 'Atorvastatin 10mg',
-          dosage: '1 Tablet (10mg)',
-          purpose: 'Cholesterol & Cardiovascular Protection',
-          timeSlot: '09:00 PM',
-          period: 'Night',
-          mealTiming: 'After Food',
-          prescribedBy: 'Dr. Rajeshwari Deshmukh',
-          pillsRemaining: 4,
-          todayStatus: 'pending',
-          notes: 'Low stock alert: Only 4 tablets remaining.',
-        },
-      ],
-      appointments: [
-        {
-          id: 'apt-101',
-          doctorName: 'Dr. Rajeshwari Deshmukh',
-          speciality: 'Cardiology & Geriatric Medicine',
-          clinicOrHospital: ' Sahyadri Senior Heart Clinic, Pune',
-          appointmentDate: '2026-11-18',
-          appointmentTime: '10:30 AM',
-          purpose: 'Monthly BP, ECG & Lipid Profile Review',
-          status: 'upcoming',
-          preparationNotes: 'Carry 7-day fasting blood sugar log and current prescription strips.',
-          accompaniedBy: 'Siddhesh Hote (Son)',
-          reminderEmailSent: true,
-        },
-        {
-          id: 'apt-102',
-          doctorName: 'Dr. Nilesh Kulkarni',
-          speciality: 'Orthopedics & Physiotherapy',
-          clinicOrHospital: 'Deccan Bone & Joint Center, Pune',
-          appointmentDate: '2026-11-24',
-          appointmentTime: '04:00 PM',
-          purpose: 'Knee Osteoarthritis Mobility Assessment',
-          status: 'upcoming',
-          preparationNotes: 'Wear comfortable walking footwear for gait check.',
-          accompaniedBy: 'Sister Kavita More (Primary Caretaker)',
-          reminderEmailSent: false,
-        },
-      ],
-      routines: [
-        {
-          id: 'rt-1',
-          title: 'Fasting Blood Sugar & Blood Pressure Check',
-          time: '07:15 AM',
-          category: 'Vitals',
-          completed: true,
-          completedBy: 'Sister Kavita More (Primary Caretaker)',
-        },
-        {
-          id: 'rt-2',
-          title: '20-Minute Gentle Morning Courtyard Walk',
-          time: '07:45 AM',
-          category: 'Exercise',
-          completed: true,
-          completedBy: 'Rameshwar Patil (Elderly Self)',
-        },
-        {
-          id: 'rt-3',
-          title: 'Mid-Morning Warm Water & Fruit Intake',
-          time: '11:00 AM',
-          category: 'Hydration',
-          completed: true,
-          completedBy: 'Rameshwar Patil (Elderly Self)',
-        },
-        {
-          id: 'rt-4',
-          title: 'Evening Knee Mobility & Breathing Stretches',
-          time: '06:00 PM',
-          category: 'Exercise',
-          completed: false,
-        },
-      ],
-      emailReminders: [
-        {
-          id: 'em-101',
-          elderlyId: 'elder-1',
-          type: 'missed_medication',
-          subject: '[URGENT CARE ALERT] Missed Medication for Rameshwar Patil: Calcium + Vitamin D3 (05:00 PM)',
-          recipients: ['siddheshhote@gmail.com', 'sunita.familycare@gmail.com', 'kavita.caretaker@silvercare.org'],
-          bodyPreview:
-            'Proactive Care Circle Alert: Rameshwar Patil (72 yrs) missed the 05:00 PM dose of Calcium + Vitamin D3. Sent after the 30-minute self-check-in grace window.',
-          sentAt: 'Today, 05:30 PM IST',
-          status: 'delivered',
-          triggeredBy: 'Automated Adherence Watchdog',
-        },
-        {
-          id: 'em-102',
-          elderlyId: 'elder-1',
-          type: 'upcoming_dose',
-          subject: '[UPCOMING DOSE REMINDER] Atorvastatin 10mg at 09:00 PM — Rameshwar Patil',
-          recipients: ['rameshwar.patil@silvercare.org', 'kavita.caretaker@silvercare.org'],
-          bodyPreview:
-            'Upcoming Medication Reminder: Rameshwar Patil is scheduled to take Atorvastatin 10mg (1 Tablet, After Food) at 09:00 PM. Note: Only 4 tablets remaining.',
-          sentAt: 'Today, 08:30 PM IST',
-          status: 'delivered',
-          triggeredBy: 'Proactive Dose Scheduler',
-        },
-        {
-          id: 'em-103',
-          elderlyId: 'elder-1',
-          type: 'appointment_reminder',
-          subject: '[APPOINTMENT REMINDER] Rameshwar Patil — Dr. Rajeshwari Deshmukh on 2026-11-18 at 10:30 AM',
-          recipients: ['siddheshhote@gmail.com', 'rameshwar.patil@silvercare.org', 'kavita.caretaker@silvercare.org'],
-          bodyPreview:
-            'Medical Appointment Reminder: Rameshwar Patil has an upcoming visit with Dr. Rajeshwari Deshmukh (Cardiology) on 2026-11-18 at 10:30 AM. Accompanied by Siddhesh Hote (Son).',
-          sentAt: 'Today, 09:00 AM IST',
-          status: 'delivered',
-          triggeredBy: 'Appointment Sync Engine',
-        },
-      ],
-    },
-    {
-      id: 'elder-2',
-      name: 'Kamalabai Deshmukh',
-      age: 68,
-      gender: 'Female',
-      bloodGroup: 'O+',
-      city: 'Nashik',
-      passcodeHint: '2026',
-      passcodeHash: hashPasscode('2026'),
-      chronicConditions: ['Hypothyroidism', 'Seasonal Bronchial Asthma'],
-      allergies: ['NSAID Painkillers'],
-      primaryDoctorName: 'Dr. Tushar Shinde (Pulmonology)',
-      emergencyContact: '+91 98231 55660',
-      adherenceRate7d: 96,
-      weeklyHistory: [
-        { day: 'Mon', taken: 3, total: 3 },
-        { day: 'Tue', taken: 3, total: 3 },
-        { day: 'Wed', taken: 3, total: 3 },
-        { day: 'Thu', taken: 3, total: 3 },
-        { day: 'Fri', taken: 3, total: 3 },
-        { day: 'Sat', taken: 3, total: 3 },
-        { day: 'Sun', taken: 2, total: 3 },
-      ],
-      vitalsSummary: {
-        bp: '122/78 mmHg',
-        bloodSugar: '98 mg/dL',
-        heartRate: 72,
-        spo2: 99,
-        lastUpdated: 'Today, 08:00 AM IST',
-      },
-      autonomyPreferences: {
-        gracePeriodMinutes: 45,
-        voiceReadoutEnabled: true,
-        preferredLanguage: 'mr-IN',
-        allowCaretakerScheduleEdits: true,
-        dailyCheckInMood: 'Energetic',
-        personalCareNote: 'Prefers Marathi voice reminders 30 minutes before morning thyroid dose.',
-      },
-      careCircle: [
-        {
-          id: 'cc-201',
-          name: 'Kamalabai Deshmukh',
-          relation: 'Elderly Self',
-          email: 'kamalabai.d@silvercare.org',
-          phone: '+91 98231 10020',
-          canEditMedications: true,
-          receiveEmailAlerts: true,
-        },
-        {
-          id: 'cc-202',
-          name: 'Rohit Deshmukh',
-          relation: 'Son',
-          email: 'rohit.deshmukh@gmail.com',
-          phone: '+91 98231 55660',
-          canEditMedications: true,
-          receiveEmailAlerts: true,
-        },
-      ],
-      medications: [
-        {
-          id: 'med-201',
-          medicineName: 'Levothyroxine (Thyronorm 50mcg)',
-          dosage: '1 Tablet (50mcg)',
-          purpose: 'Thyroid Hormone Replacement',
-          timeSlot: '06:30 AM',
-          period: 'Morning',
-          mealTiming: 'Before Food',
-          prescribedBy: 'Dr. Sameer Joshi',
-          pillsRemaining: 24,
-          todayStatus: 'taken',
-          lastTakenAt: '06:35 AM IST',
-          notes: 'Take on an empty stomach 45 minutes before morning tea.',
-        },
-        {
-          id: 'med-202',
-          medicineName: 'Montelukast + Levocetirizine',
-          dosage: '1 Tablet',
-          purpose: 'Nighttime Airway & Asthma Prevention',
-          timeSlot: '08:30 PM',
-          period: 'Night',
-          mealTiming: 'After Food',
-          prescribedBy: 'Dr. Tushar Shinde',
-          pillsRemaining: 12,
-          todayStatus: 'pending',
-          notes: 'Take after dinner.',
-        },
-      ],
-      appointments: [
-        {
-          id: 'apt-201',
-          doctorName: 'Dr. Tushar Shinde',
-          speciality: 'Pulmonology',
-          clinicOrHospital: 'Chest & Allergy Care Clinic, Nashik',
-          appointmentDate: '2026-11-21',
-          appointmentTime: '11:15 AM',
-          purpose: 'Spirometry & Winter Inhaler Review',
-          status: 'upcoming',
-          preparationNotes: 'Bring current inhaler and thyroid blood test report.',
-          accompaniedBy: 'Rohit Deshmukh (Son)',
-          reminderEmailSent: true,
-        },
-      ],
-      routines: [
-        {
-          id: 'rt-201',
-          title: 'Warm Steam Inhalation & Breathing Exercise',
-          time: '08:00 AM',
-          category: 'Wellness',
-          completed: true,
-          completedBy: 'Kamalabai Deshmukh (Elderly Self)',
-        },
-        {
-          id: 'rt-202',
-          title: 'Evening Pulse Oximeter & SpO2 Check',
-          time: '07:00 PM',
-          category: 'Vitals',
-          completed: false,
-        },
-      ],
-      emailReminders: [
-        {
-          id: 'em-201',
-          elderlyId: 'elder-2',
-          type: 'upcoming_dose',
-          subject: '[UPCOMING DOSE REMINDER] Montelukast + Levocetirizine at 08:30 PM — Kamalabai Deshmukh',
-          recipients: ['kamalabai.d@silvercare.org', 'rohit.deshmukh@gmail.com'],
-          bodyPreview:
-            'Scheduled Night Medication: Please take 1 Tablet of Montelukast + Levocetirizine after dinner at 08:30 PM.',
-          sentAt: 'Today, 08:00 PM IST',
-          status: 'delivered',
-          triggeredBy: 'Proactive Dose Scheduler',
-        },
-      ],
-    },
-  ];
 }
 
 let cachedDB: DatabaseSchema | null = null;
@@ -562,7 +189,7 @@ export function loadDB(): DatabaseSchema {
   }
 
   cachedDB = {
-    elderlyProfiles: getInitialSeedProfiles(),
+    elderlyProfiles: getInitialSeedProfiles(hashPasscode),
     auditLogs: [
       {
         id: `audit-${Date.now()}`,
@@ -1251,6 +878,64 @@ app.patch('/api/elderly-care/profiles/:id/appointments/:aptId', (req: Request, r
   });
 });
 
+app.put('/api/elderly-care/profiles/:id/appointments/:aptId', (req: Request, res: Response) => {
+  const { id, aptId } = req.params;
+  const { actorName = 'Care Circle Member', ...updates } = req.body;
+
+  const db = loadDB();
+  const profile = db.elderlyProfiles.find((p) => p.id === id);
+  if (!profile) {
+    return res.status(404).json({ success: false, message: 'Profile not found.' });
+  }
+
+  if (!verifyCareCircleRequestAuth(profile, req)) {
+    return res.status(401).json({
+      success: false,
+      message: 'Care Circle passcode verification required to edit medical appointments.',
+    });
+  }
+
+  const idx = profile.appointments.findIndex((a) => a.id === aptId);
+  if (idx === -1) {
+    return res.status(404).json({ success: false, message: 'Appointment not found.' });
+  }
+
+  profile.appointments[idx] = {
+    ...profile.appointments[idx],
+    doctorName: updates.doctorName ? String(updates.doctorName).trim() : profile.appointments[idx].doctorName,
+    speciality: updates.speciality ? String(updates.speciality).trim() : profile.appointments[idx].speciality,
+    clinicOrHospital: updates.clinicOrHospital
+      ? String(updates.clinicOrHospital).trim()
+      : profile.appointments[idx].clinicOrHospital,
+    appointmentDate: updates.appointmentDate
+      ? String(updates.appointmentDate).trim()
+      : profile.appointments[idx].appointmentDate,
+    appointmentTime: updates.appointmentTime
+      ? String(updates.appointmentTime).trim()
+      : profile.appointments[idx].appointmentTime,
+    purpose: updates.purpose ? String(updates.purpose).trim() : profile.appointments[idx].purpose,
+    preparationNotes:
+      updates.preparationNotes !== undefined
+        ? String(updates.preparationNotes).trim()
+        : profile.appointments[idx].preparationNotes,
+    accompaniedBy: updates.accompaniedBy
+      ? String(updates.accompaniedBy).trim()
+      : profile.appointments[idx].accompaniedBy,
+  };
+
+  saveDB(db);
+  addAudit(
+    actorName,
+    'APPOINTMENT_RESCHEDULED',
+    `Updated appointment details for ${profile.appointments[idx].doctorName} on ${profile.appointments[idx].appointmentDate}`
+  );
+
+  return res.json({
+    success: true,
+    profile: sanitizePublicProfile(profile),
+  });
+});
+
 // 11. Daily Healthcare Routines (Toggle & Add)
 app.patch('/api/elderly-care/profiles/:id/routines/:routineId/toggle', (req: Request, res: Response) => {
   const { id, routineId } = req.params;
@@ -1362,6 +1047,45 @@ app.post('/api/elderly-care/profiles/:id/care-circle', (req: Request, res: Respo
   addAudit(actorName, 'CARE_CIRCLE_MEMBER_ADDED', `Added ${newMember.name} (${newMember.relation}) to ${profile.name}'s Care Circle`);
 
   return res.status(201).json({
+    success: true,
+    profile: sanitizePublicProfile(profile),
+  });
+});
+
+app.delete('/api/elderly-care/profiles/:id/care-circle/:memberId', (req: Request, res: Response) => {
+  const { id, memberId } = req.params;
+  const actorName = req.body?.actorName || 'Care Circle Admin';
+
+  const db = loadDB();
+  const profile = db.elderlyProfiles.find((p) => p.id === id);
+  if (!profile) {
+    return res.status(404).json({ success: false, message: 'Profile not found.' });
+  }
+
+  if (!verifyCareCircleRequestAuth(profile, req)) {
+    return res.status(401).json({
+      success: false,
+      message: 'Care Circle passcode verification required to remove Care Circle members.',
+    });
+  }
+
+  const target = profile.careCircle.find((m) => m.id === memberId);
+  if (!target) {
+    return res.status(404).json({ success: false, message: 'Care Circle member not found.' });
+  }
+
+  if (target.relation === 'Elderly Self') {
+    return res.status(400).json({
+      success: false,
+      message: 'The primary Elderly Self profile owner cannot be removed from the Care Circle.',
+    });
+  }
+
+  profile.careCircle = profile.careCircle.filter((m) => m.id !== memberId);
+  saveDB(db);
+  addAudit(actorName, 'CARE_CIRCLE_MEMBER_REMOVED', `Removed ${target.name} from ${profile.name}'s Care Circle`);
+
+  return res.json({
     success: true,
     profile: sanitizePublicProfile(profile),
   });

@@ -174,6 +174,22 @@ export const api = {
     return data.profile;
   },
 
+  async updateAppointment(
+    elderlyId: string,
+    aptId: string,
+    updates: Partial<MedicalAppointment>,
+    actorName: string
+  ): Promise<ElderlyProfile> {
+    const res = await fetch(`${BASE_URL}/elderly-care/profiles/${elderlyId}/appointments/${aptId}`, {
+      method: 'PUT',
+      headers: buildProtectedHeaders(elderlyId),
+      body: JSON.stringify({ ...updates, actorName }),
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) throw new Error(data.message || 'Failed to edit appointment');
+    return data.profile;
+  },
+
   async toggleRoutineTask(elderlyId: string, routineId: string, actorName: string): Promise<ElderlyProfile> {
     const res = await fetch(`${BASE_URL}/elderly-care/profiles/${elderlyId}/routines/${routineId}/toggle`, {
       method: 'PATCH',
@@ -212,6 +228,21 @@ export const api = {
     });
     const data = await res.json();
     if (!res.ok || !data.success) throw new Error(data.message || 'Failed to add Care Circle member');
+    return data.profile;
+  },
+
+  async removeCareCircleMember(
+    elderlyId: string,
+    memberId: string,
+    actorName: string
+  ): Promise<ElderlyProfile> {
+    const res = await fetch(`${BASE_URL}/elderly-care/profiles/${elderlyId}/care-circle/${memberId}`, {
+      method: 'DELETE',
+      headers: buildProtectedHeaders(elderlyId),
+      body: JSON.stringify({ actorName }),
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) throw new Error(data.message || 'Failed to remove Care Circle member');
     return data.profile;
   },
 

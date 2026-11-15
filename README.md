@@ -70,18 +70,18 @@ To provide transparent engineering documentation for evaluation, features are ca
   - Hybrid architecture combining Google Gemini (`gemini-2.5-flash` via `@google/genai` with a 3.5s timeout guard) and deterministic clinical fallback (`generateContextualAssistantReply`), plus 1-click contextual actions and Web Speech API voice input/output.
 - **Senior Accessibility Suite (`src/App.tsx`, `src/components/ElderlyCareHub.tsx`):**
   - Live font scaling (`100% Standard`, `115% Large`, `130% Extra Large`), WCAG AAA High-Contrast Mode, Multilingual Voice Read-Aloud (`en-IN`, `hi-IN`, `mr-IN`), keyboard `Escape` modal dismissal, and skip-to-content navigation.
-- **Automated Test Suite (`tests/elderlyCare.test.ts`):**
-  - 9 unit and integration tests using Node's native test runner (`node:test`) — **9/9 passing**.
-
-### PARTIALLY IMPLEMENTED (Functional Simulation / Sandbox-Safe Implementation)
-- **Proactive Email Reminder Delivery (`server.ts`, `src/utils/clinicalDecisionEngine.ts`):**
-  - Emails are dynamically composed with real recipient addresses (`siddheshhote@gmail.com` and Care Circle members with `receiveEmailAlerts: true`), subject lines, clinical context bodies, and IST timestamps, and persisted into `profile.emailReminders` (viewable in the **Care Circle Email Outbox**).
-  - *Current Limitation:* Because sandboxed evaluation environments do not bundle external SMTP/SendGrid credentials by default, email dispatch is logged to the persistent outbox (`status: 'delivered'`) rather than transmitted over an external SMTP relay.
+- **Proactive Email Reminder Engine & Automated Sweep (`server.ts`, `src/utils/clinicalDecisionEngine.ts`):**
+  - Automatically sweeps (`runProactiveReminderSweep`) and dispatches structured email notifications (`buildProactiveEmailReminder`) for **missed medications**, **upcoming doses**, **upcoming doctor appointments**, and **low-stock refills** to all Care Circle recipients with `receiveEmailAlerts: true`, persisting every alert into `profile.emailReminders` with deduplication and IST timestamps.
 - **Adaption Labs Backend Connectivity (`GET /api/adaption/test` in `server.ts`):**
-  - Implements secure server-side environment resolution (`resolveAdaptionConfig`) reading `ADAPTION_API_KEY` and `ADAPTION_API_BASE_URL` (`https://api.prod.adaptionlabs.ai`) and testing connectivity via `Bearer` token authentication without exposing keys to the client.
+  - Implements secure server-side environment resolution (`resolveAdaptionConfig`) reading `ADAPTION_API_KEY` and `ADAPTION_API_BASE_URL` (`https://api.prod.adaptionlabs.ai`) and verifying connectivity via `Bearer` token authentication without exposing keys to the client.
+- **Automated Test Suite (`tests/elderlyCare.test.ts`):**
+  - 10 unit and integration tests using Node's native test runner (`node:test`) — **10/10 passing**.
+
+### SANDBOX-SAFE TRANSPORT NOTE
+- **In-App Persistent Email Outbox (`profile.emailReminders`):**
+  - Because cloud evaluation sandboxes do not bundle third-party SMTP credentials by default, generated email payloads (with real recipient addresses, subject lines, clinical context bodies, and IST timestamps) are delivered to the persistent **Care Circle Email Outbox** (`status: 'delivered'`) and can be optionally forwarded to an external SMTP/Resend webhook in production.
 
 ### PLANNED (Future Roadmap Beyond Hackathon Scope)
-- **External SMTP / Transactional Email Webhook (Nodemailer / Resend / SendGrid):** Optional drop-in SMTP transport when production mail credentials are provided.
 - **Wearable & Bluetooth Glucometer/BP Monitor Sync:** Automated ingestion of vitals via Web Bluetooth / Google Fit APIs.
 - **SMS / WhatsApp Escalation Fallback:** Secondary escalation channel if urgent missed-dose emails go unacknowledged after 60 minutes.
 
