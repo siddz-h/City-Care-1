@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import { FontScale } from './types';
 import { ElderlyCareHub } from './components/ElderlyCareHub';
 import { Plus } from 'lucide-react';
@@ -23,12 +24,14 @@ export default function App() {
   ];
 
   return (
-    <div
-      className={`min-h-screen flex flex-col ${
-        highContrast ? 'bg-black text-white' : 'text-slate-900'
-      }`}
-    >
-      {/* WCAG 2.1 AA/AAA Skip to Main Content Link */}
+    <>
+      <Analytics />
+      <div
+        className={`min-h-screen flex flex-col ${
+          highContrast ? 'bg-black text-white' : 'text-slate-900'
+        }`}
+      >
+        {/* WCAG 2.1 AA/AAA Skip to Main Content Link */}
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:rounded-xl focus:bg-[#0F172A] focus:text-[#A3E635] focus:font-extrabold"
@@ -168,5 +171,6 @@ export default function App() {
         </div>
       </footer>
     </div>
+    </>
   );
 }
