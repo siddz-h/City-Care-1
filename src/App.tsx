@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import { FontScale } from './types';
 import { ElderlyCareHub } from './components/ElderlyCareHub';
 import { Plus } from 'lucide-react';
@@ -167,6 +168,7 @@ export default function App() {
           </div>
         </div>
       </footer>
+      <Analytics />
     </div>
   );
 }
