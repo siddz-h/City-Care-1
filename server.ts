@@ -29,7 +29,9 @@ const __dirname = path.dirname(__filename);
 
 export const app = express();
 const PORT = Number(process.env.PORT) || 3000;
-const DB_PATH = path.join(__dirname, 'data', 'db.json');
+const DB_PATH = process.env.VERCEL
+  ? path.join('/tmp', 'silvercare-db.json')
+  : path.join(__dirname, 'data', 'db.json');
 
 // Security & JSON Middleware
 app.use(express.json({ limit: '256kb' }));
@@ -1631,8 +1633,10 @@ async function startServer() {
   });
 }
 
-if (process.env.NODE_ENV !== 'test') {
+if (process.env.NODE_ENV !== 'test' && !process.env.VERCEL) {
   startServer().catch((err) => {
     console.error('Failed to start server:', err);
   });
 }
+
+export default app;
